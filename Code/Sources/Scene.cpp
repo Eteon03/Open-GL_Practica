@@ -114,6 +114,7 @@ namespace udit
 
         cone_view_matrix = glm::translate(cone_view_matrix, glm::vec3(2.f, -1.f, -8.f));
         cone_view_matrix = glm::rotate(cone_view_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
+        cone_view_matrix = glm::rotate(cone_view_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
 
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cone_view_matrix));
 
