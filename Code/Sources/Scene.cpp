@@ -88,51 +88,37 @@ namespace udit
 
     void Scene::render()
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Se rota el cubo y se empuja hacia el fondo:
-        glm::mat4 view_matrix = camera.get_view_matrix(); // Obtener la vista desde la cámara
-        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(view_matrix));
-        
-        glm::mat4 model_view_matrix(1);
-        //model_view_matrix = glm::translate(model_view_matrix, glm::vec3(0.f, 0.f, 0.f));       //Funciona como perspectiva de cámara
-        //model_view_matrix = glm::rotate(model_view_matrix, angle, glm::vec3(1.f, 2.f, 1.f));
+        // Obtener la matriz de vista de la cámara
+        glm::mat4 view_matrix = camera.get_view_matrix();
 
-        //glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
-
-        // Se dibuja el cubo:
-
-        //cube.render();
-
-        glm::mat4 plane_view_matrix=model_view_matrix;
-
-        plane_view_matrix = glm::translate(plane_view_matrix, glm::vec3(-3.f, 0.f, -8.f));
-        plane_view_matrix = glm::rotate(plane_view_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
-
-        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(plane_view_matrix));
-
+        // Dibujar el plano
+        glm::mat4 plane_model_matrix(1.0f);
+        plane_model_matrix = glm::translate(plane_model_matrix, glm::vec3(-3.f, 0.f, -8.f));
+        plane_model_matrix = glm::rotate(plane_model_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
+        glm::mat4 plane_mvp_matrix = view_matrix * plane_model_matrix;
+        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(plane_mvp_matrix));
         plane.render();
 
-        glm::mat4 cylinder_view_matrix = model_view_matrix;
-
-        cylinder_view_matrix = glm::translate(cylinder_view_matrix, glm::vec3(-2.f, -1.f, -8.f));
-        cylinder_view_matrix = glm::rotate(cylinder_view_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
-
-        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cylinder_view_matrix));
-
+        // Dibujar el cilindro
+        glm::mat4 cylinder_model_matrix(1.0f);
+        cylinder_model_matrix = glm::translate(cylinder_model_matrix, glm::vec3(-2.f, -0.72f, -6.f));
+        cylinder_model_matrix = glm::rotate(cylinder_model_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
+        glm::mat4 cylinder_mvp_matrix = view_matrix * cylinder_model_matrix;
+        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cylinder_mvp_matrix));
         cylinder.render();
 
-        glm::mat4 cone_view_matrix = model_view_matrix;
-
-        cone_view_matrix = glm::translate(cone_view_matrix, glm::vec3(2.f, -1.f, -8.f));
-        cone_view_matrix = glm::rotate(cone_view_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
-        cone_view_matrix = glm::rotate(cone_view_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
-
-        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cone_view_matrix));
-
+        // Dibujar el cono
+        glm::mat4 cone_model_matrix(1.0f);
+        cone_model_matrix = glm::translate(cone_model_matrix, glm::vec3(2.f, -0.72f, -6.f));
+        cone_model_matrix = glm::rotate(cone_model_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
+        cone_model_matrix = glm::rotate(cone_model_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
+        glm::mat4 cone_mvp_matrix = view_matrix * cone_model_matrix;
+        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cone_mvp_matrix));
         cone.render();
-
     }
+
 
     void Scene::resize(unsigned width, unsigned height)
     {
