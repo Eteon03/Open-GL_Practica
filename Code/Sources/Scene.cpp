@@ -50,7 +50,8 @@ namespace udit
 
     Scene::Scene(unsigned width, unsigned height)
         :
-        angle(0), plane(6,4), cylinder(10,1,1,3), cone(10,1.4,3)
+        angle(0), plane(6,4), cylinder(10,1,1,3), cone(10,1.4,3),
+        camera(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 1.f, 0.f), -90.f, 0.f) // Posición inicial
     {
         // Se establece la configuración básica:
 
@@ -70,6 +71,16 @@ namespace udit
         resize(width, height);
     }
 
+    void Scene::process_input(const Uint8* keystate, float delta_time)
+    {
+        camera.process_keyboard(keystate, delta_time);
+    }
+
+    void Scene::process_mouse_motion(float x_offset, float y_offset)
+    {
+        camera.process_mouse_motion(x_offset, y_offset);
+    }
+
     void Scene::update()
     {
         angle += 0.01f;
@@ -80,10 +91,11 @@ namespace udit
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Se rota el cubo y se empuja hacia el fondo:
-
+        glm::mat4 view_matrix = camera.get_view_matrix(); // Obtener la vista desde la cámara
+        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(view_matrix));
+        
         glm::mat4 model_view_matrix(1);
-
-        model_view_matrix = glm::translate(model_view_matrix, glm::vec3(0.f, 0.f, 0.f));       //Funciona como perspectiva de cámara
+        //model_view_matrix = glm::translate(model_view_matrix, glm::vec3(0.f, 0.f, 0.f));       //Funciona como perspectiva de cámara
         //model_view_matrix = glm::rotate(model_view_matrix, angle, glm::vec3(1.f, 2.f, 1.f));
 
         //glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
@@ -119,6 +131,7 @@ namespace udit
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cone_view_matrix));
 
         cone.render();
+
     }
 
     void Scene::resize(unsigned width, unsigned height)

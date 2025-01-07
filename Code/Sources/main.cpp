@@ -2,7 +2,9 @@
 // Este código es de dominio público
 // angel.rodriguez@udit.es
 
+#include <SDL.h>
 #include "../Headers/Scene.hpp"
+#include "../Headers/Camera.hpp"
 #include <Window.hpp>
 
 using udit::Scene;

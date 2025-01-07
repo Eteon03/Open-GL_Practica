@@ -8,6 +8,7 @@
 #include "Plane.hpp"
 #include "Cylinder.hpp"
 #include "Cone.hpp"
+#include "Camera.hpp" 
 #include <string>
 
 namespace udit
@@ -27,12 +28,15 @@ namespace udit
         Plane plane;
         Cylinder cylinder;
         Cone cone;
+        Camera camera;
         float  angle;
 
     public:
 
         Scene(unsigned width, unsigned height);
 
+        void process_input(const Uint8* keystate, float delta_time); // Procesar teclado
+        void process_mouse_motion(float x_offset, float y_offset);  // Procesar ratón
         void   update();
         void   render();
         void   resize(unsigned width, unsigned height);

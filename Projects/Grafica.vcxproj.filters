@@ -27,6 +27,9 @@
     <ClInclude Include="..\Code\Headers\Cone.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Headers\Camera.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Code\Sources\Cube.cpp">
@@ -48,6 +51,9 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\Sources\Cone.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Sources\Camera.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
