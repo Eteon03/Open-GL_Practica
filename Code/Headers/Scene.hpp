@@ -29,6 +29,8 @@ namespace udit
         Cylinder cylinder;
         Cone cone;
         Camera camera;
+        GLuint texture_id;
+        GLuint program_id;
         float  angle;
 
     public:
@@ -40,6 +42,7 @@ namespace udit
         void   update();
         void   render();
         void   resize(unsigned width, unsigned height);
+        void conetexture();
 
     private:
 

@@ -18,6 +18,7 @@
     <ClInclude Include="..\Code\Headers\Plane.hpp" />
     <ClInclude Include="..\Code\Headers\Scene.hpp" />
     <ClInclude Include="..\Code\Headers\stb_image.h" />
+    <ClInclude Include="..\Code\Headers\Texture.hpp" />
     <ClInclude Include="..\Shared\Code\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -29,6 +30,7 @@
     <ClCompile Include="..\Code\Sources\Plane.cpp" />
     <ClCompile Include="..\Code\Sources\Scene.cpp" />
     <ClCompile Include="..\Code\Sources\stb_image.cpp" />
+    <ClCompile Include="..\Code\Sources\Texture.cpp" />
     <ClCompile Include="..\Shared\Code\Window.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

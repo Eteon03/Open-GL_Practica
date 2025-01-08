@@ -25,6 +25,14 @@ namespace udit
             colors.push_back(1.0f);
             colors.push_back(1.0f);
             colors.push_back(1.0f);
+
+
+            float u = 0.5f + 0.5f * cos(2.0f * std::numbers::pi * i / radial_segments);
+            float v = 0.5f + 0.5f * sin(2.0f * std::numbers::pi * i / radial_segments);
+
+            // Coordenadas UV de la base
+            uvs.push_back(u);
+            uvs.push_back(v);
         }
 
         // Vértice central de la base
@@ -36,6 +44,9 @@ namespace udit
         colors.push_back(0.0f);
         colors.push_back(0.0f);
 
+        uvs.push_back(0.5f);
+        uvs.push_back(0.5f);
+
         int base_center_index = radial_segments;
 
         // Generar el vértice del ápice:
@@ -46,6 +57,9 @@ namespace udit
         colors.push_back(0.0f);
         colors.push_back(0.0f);
         colors.push_back(1.0f);
+
+        uvs.push_back(0.5f);
+        uvs.push_back(0.5f);
 
         int apex_index = radial_segments + 1;
 
@@ -61,9 +75,11 @@ namespace udit
         for (int i = 0; i < radial_segments; ++i)
         {
             indices.push_back(i);
-            indices.push_back((i + 1) % radial_segments);
             indices.push_back(apex_index);
+            indices.push_back((i + 1) % radial_segments);
+            
         }
+
 
         // Crear y configurar los buffers de OpenGL:
         glGenBuffers(VBO_COUNT, vbo_ids);
@@ -85,6 +101,13 @@ namespace udit
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+        // UVs
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[UVS_VBO]);
+        glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(GLfloat), uvs.data(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
         // Índices
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_ids[INDICES_EBO]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLubyte), indices.data(), GL_STATIC_DRAW);
@@ -100,8 +123,8 @@ namespace udit
 
     void Cone::render()
     {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glDisable(GL_CULL_FACE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glEnable(GL_CULL_FACE);
         glBindVertexArray(vao_id);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_BYTE, 0);
         glBindVertexArray(0);

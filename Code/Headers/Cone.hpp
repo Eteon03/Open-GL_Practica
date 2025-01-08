@@ -19,6 +19,7 @@ namespace udit
         {
             COORDINATES_VBO,
             COLORS_VBO,
+            UVS_VBO,
             INDICES_EBO,
             VBO_COUNT
         };
@@ -28,6 +29,7 @@ namespace udit
         std::vector<GLfloat> coordinates;
         std::vector<GLfloat> colors;
         std::vector<GLubyte> indices;
+        std::vector<GLfloat> uvs;
 
         GLuint vbo_ids[VBO_COUNT];      // Ids de los VBOs que se usan
         GLuint vao_id;                  // Id del VAO del cono

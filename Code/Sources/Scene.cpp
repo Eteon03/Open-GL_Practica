@@ -12,6 +12,7 @@
 #include <glm.hpp>                          // vec3, vec4, ivec4, mat4
 #include <gtc/matrix_transform.hpp>         // translate, rotate, scale, perspective
 #include <gtc/type_ptr.hpp>                 // value_ptr
+#include "../Headers/stb_image.h"
 
 namespace udit
 {
@@ -27,13 +28,17 @@ namespace udit
         ""
         "layout (location = 0) in vec3 vertex_coordinates;"
         "layout (location = 1) in vec3 vertex_color;"
+        "layout(location = 2) in vec2 vertex_uv;"
+        ""
         ""
         "out vec3 front_color;"
+        "out vec2 tex_coord;"
         ""
         "void main()"
         "{"
         "   gl_Position = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
         "   front_color = vertex_color;"
+        "   tex_coord = vertex_uv;"
         "}";
 
     const string Scene::fragment_shader_code =
@@ -41,11 +46,14 @@ namespace udit
         "#version 330\n"
         ""
         "in  vec3    front_color;"
+        "in vec2 tex_coord;"
+        "uniform sampler2D texture_sampler;"
         "out vec4 fragment_color;"
         ""
         "void main()"
         "{"
-        "    fragment_color = vec4(front_color, 1.0);"
+        "   vec4 texture_color = texture(texture_sampler, tex_coord);"
+        "   fragment_color = texture_color * vec4(front_color, 1.0);"
         "}";
 
     Scene::Scene(unsigned width, unsigned height)
@@ -53,15 +61,17 @@ namespace udit
         angle(0), plane(6,4), cylinder(10,1,1,3), cone(10,1.4,3),
         camera(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 1.f, 0.f), -90.f, 0.f) // Posición inicial
     {
+        conetexture();
+
         // Se establece la configuración básica:
 
         glEnable(GL_CULL_FACE);
-        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
         glClearColor(.2f, .2f, .2f, 1.f);
 
         // Se compilan y se activan los shaders:
 
-        GLuint program_id = compile_shaders();
+        program_id = compile_shaders();
 
         glUseProgram(program_id);
 
@@ -69,6 +79,7 @@ namespace udit
         projection_matrix_id = glGetUniformLocation(program_id, "projection_matrix");
 
         resize(width, height);
+
     }
 
     void Scene::process_input(const Uint8* keystate, float delta_time)
@@ -110,6 +121,11 @@ namespace udit
         cylinder.render();
 
         // Dibujar el cono
+        
+        glActiveTexture(GL_TEXTURE0); // Activar la unidad de textura 0
+        glBindTexture(GL_TEXTURE_2D, texture_id); // Vincular la textura
+        glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0); // Enviar la textura al shader
+
         glm::mat4 cone_model_matrix(1.0f);
         cone_model_matrix = glm::translate(cone_model_matrix, glm::vec3(2.f, -0.72f, -6.f));
         cone_model_matrix = glm::rotate(cone_model_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
@@ -127,6 +143,40 @@ namespace udit
         glUniformMatrix4fv(projection_matrix_id, 1, GL_FALSE, glm::value_ptr(projection_matrix));
 
         glViewport(0, 0, width, height);
+    }
+
+    void Scene::conetexture()
+    {
+        int width, height, channels;
+        unsigned char* data = stbi_load("../../Textures/cono_textura.jpg", &width, &height, &channels, 0);
+
+        if (!data)
+        {
+            cerr << "Error: No se pudo cargar la textura." << endl;
+            assert(false);
+        }
+
+        GLuint texture_id;
+        glGenTextures(1, &texture_id);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+
+        // Configuración de la textura
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // Cargar los datos en OpenGL
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
+            channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // Liberar la memoria de la textura cargada
+        stbi_image_free(data);
+
+        // Guardar el ID de la textura para usarlo después
+        this->texture_id = texture_id;
+
     }
 
     GLuint Scene::compile_shaders()
