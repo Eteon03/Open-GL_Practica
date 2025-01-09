@@ -53,7 +53,7 @@ namespace udit
         "void main()"
         "{"
         "   vec4 texture_color = texture(texture_sampler, tex_coord);"
-        "   fragment_color = texture_color * vec4(front_color, 1.0);"
+        "   fragment_color = texture(texture_sampler, tex_coord);"
         "}";
 
     Scene::Scene(unsigned width, unsigned height)
@@ -61,7 +61,7 @@ namespace udit
         angle(0), plane(6,4), cylinder(10,1,1,3), cone(10,1.4,3),
         camera(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 1.f, 0.f), -90.f, 0.f) // Posición inicial
     {
-        conetexture();
+        
 
         // Se establece la configuración básica:
 
@@ -79,6 +79,10 @@ namespace udit
         projection_matrix_id = glGetUniformLocation(program_id, "projection_matrix");
 
         resize(width, height);
+
+        textureLoader("../Textures/cylinder_texture.jpg");
+        textureLoader("../Textures/cono_textura.jpg");
+        
 
     }
 
@@ -112,7 +116,12 @@ namespace udit
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(plane_mvp_matrix));
         plane.render();
 
+        texture_id = 1;
         // Dibujar el cilindro
+        glActiveTexture(GL_TEXTURE0); // Activar la unidad de textura 0
+        glBindTexture(GL_TEXTURE_2D, texture_id); // Vincular la textura
+        glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0);
+
         glm::mat4 cylinder_model_matrix(1.0f);
         cylinder_model_matrix = glm::translate(cylinder_model_matrix, glm::vec3(-2.f, -0.72f, -6.f));
         cylinder_model_matrix = glm::rotate(cylinder_model_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
@@ -120,6 +129,7 @@ namespace udit
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cylinder_mvp_matrix));
         cylinder.render();
 
+        texture_id++;
         // Dibujar el cono
         
         glActiveTexture(GL_TEXTURE0); // Activar la unidad de textura 0
@@ -145,15 +155,15 @@ namespace udit
         glViewport(0, 0, width, height);
     }
 
-    void Scene::conetexture()
+    void Scene::textureLoader(std::string route)
     {
         int width, height, channels;
-        unsigned char* data = stbi_load("../../Textures/cono_textura.jpg", &width, &height, &channels, 0);
+        unsigned char* data = stbi_load(route.c_str(), &width, &height, &channels, 0);
 
         if (!data)
         {
             cerr << "Error: No se pudo cargar la textura." << endl;
-            assert(false);
+            return; // En lugar de detener el programa
         }
 
         GLuint texture_id;

@@ -25,6 +25,12 @@ namespace udit
                 coordinates.push_back(y_pos);
                 coordinates.push_back(z_pos);
 
+                // Coordenadas UV para las caras laterales
+                float u = static_cast<float>(x) / radial_segments;
+                float v = static_cast<float>(y) / height_segments;
+                uvs.push_back(u);
+                uvs.push_back(v);
+
                 // Colores interpolados (ejemplo: degradado radial)
                 colors.push_back(static_cast<GLfloat>(x) / radial_segments);
                 colors.push_back(static_cast<GLfloat>(y) / height_segments);
@@ -37,13 +43,20 @@ namespace udit
         coordinates.push_back(0.0f);
         coordinates.push_back(0.0f);
 
+        uvs.push_back(0.5f);
+        uvs.push_back(0.5f);
+
         colors.push_back(1.0f); // Color fijo
         colors.push_back(0.0f);
         colors.push_back(0.0f);
 
+
         coordinates.push_back(0.0f); // Centro superior
         coordinates.push_back(height);
         coordinates.push_back(0.0f);
+
+        uvs.push_back(0.5f);
+        uvs.push_back(0.5f);
 
         colors.push_back(0.0f); // Color fijo
         colors.push_back(1.0f);
@@ -59,13 +72,15 @@ namespace udit
 
                 // Triángulo 1
                 indices.push_back(current);
-                indices.push_back(next);
                 indices.push_back(current + 1);
+                indices.push_back(next);
+                
 
                 // Triángulo 2
                 indices.push_back(current + 1);
-                indices.push_back(next);
                 indices.push_back(next + 1);
+                indices.push_back(next);
+                
             }
         }
 
@@ -77,13 +92,15 @@ namespace udit
         {
             // Base inferior
             indices.push_back(base_center_index);
-            indices.push_back(x);
             indices.push_back((x + 1) % radial_segments);
+            indices.push_back(x);
+            
 
             // Base superior
             indices.push_back(top_center_index);
-            indices.push_back((height_segments * (radial_segments + 1)) + x);
             indices.push_back((height_segments * (radial_segments + 1)) + (x + 1) % radial_segments);
+            indices.push_back((height_segments * (radial_segments + 1)) + x);
+            
         }
 
         // Crear y configurar los buffers de OpenGL:
@@ -106,6 +123,13 @@ namespace udit
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+        // UVs
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[UVS_VBO]);
+        glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(GLfloat), uvs.data(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
         // Índices
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_ids[INDICES_EBO]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLubyte), indices.data(), GL_STATIC_DRAW);
@@ -122,7 +146,7 @@ namespace udit
 
     void Cylinder::render()
     {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDisable(GL_CULL_FACE);
         glBindVertexArray(vao_id);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_BYTE, 0);

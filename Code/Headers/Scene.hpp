@@ -42,7 +42,7 @@ namespace udit
         void   update();
         void   render();
         void   resize(unsigned width, unsigned height);
-        void conetexture();
+        void textureLoader(std::string route);
 
     private:
 
