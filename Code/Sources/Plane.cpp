@@ -23,6 +23,10 @@ namespace udit
                 colors.push_back(static_cast<GLfloat>(x) / width);
                 colors.push_back(static_cast<GLfloat>(y) / height);
                 colors.push_back(1.0f); // Color fijo para el azul
+
+                // Coordenadas UV
+                uvs.push_back(static_cast<GLfloat>(x) / width);
+                uvs.push_back(static_cast<GLfloat>(y) / height);
             }
         }
 
@@ -68,6 +72,13 @@ namespace udit
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+        // UVs
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[UVS_VBO]);
+        glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(GLfloat), uvs.data(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(2); // Asumiendo que el atributo 2 es para UVs
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
         // Índices
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_ids[INDICES_EBO]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLubyte), indices.data(), GL_STATIC_DRAW);
@@ -81,10 +92,12 @@ namespace udit
         glDeleteBuffers(VBO_COUNT, vbo_ids);
     }
 
+
     void Plane::render()
     {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDisable(GL_CULL_FACE);
+
         glBindVertexArray(vao_id);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_BYTE, 0);
         glBindVertexArray(0);

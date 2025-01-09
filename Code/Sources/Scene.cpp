@@ -80,10 +80,10 @@ namespace udit
 
         resize(width, height);
 
+        textureLoader("../Textures/wood_texture.jpg");
         textureLoader("../Textures/cylinder_texture.jpg");
         textureLoader("../Textures/cono_textura.jpg");
         
-
     }
 
     void Scene::process_input(const Uint8* keystate, float delta_time)
@@ -108,7 +108,12 @@ namespace udit
         // Obtener la matriz de vista de la cámara
         glm::mat4 view_matrix = camera.get_view_matrix();
 
+        texture_id = 1;
         // Dibujar el plano
+        glActiveTexture(GL_TEXTURE0); // Activar la unidad de textura 0
+        glBindTexture(GL_TEXTURE_2D, texture_id); // Vincular la textura
+        glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0);
+
         glm::mat4 plane_model_matrix(1.0f);
         plane_model_matrix = glm::translate(plane_model_matrix, glm::vec3(-3.f, 0.f, -8.f));
         plane_model_matrix = glm::rotate(plane_model_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
@@ -116,8 +121,10 @@ namespace udit
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(plane_mvp_matrix));
         plane.render();
 
-        texture_id = 1;
+        texture_id++;
+
         // Dibujar el cilindro
+
         glActiveTexture(GL_TEXTURE0); // Activar la unidad de textura 0
         glBindTexture(GL_TEXTURE_2D, texture_id); // Vincular la textura
         glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0);
