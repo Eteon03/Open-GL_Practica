@@ -8,7 +8,7 @@ namespace udit
 {
 
     Camera::Camera(glm::vec3 start_position, glm::vec3 start_up, float start_yaw, float start_pitch)
-        : position(start_position), world_up(start_up), yaw(start_yaw), pitch(start_pitch), speed(2.5f), sensitivity(0.1f)
+        : position(start_position), world_up(start_up), yaw(start_yaw), pitch(start_pitch), speed(5.5f), sensitivity(0.1f)
     {
         update_camera_vectors();
     }

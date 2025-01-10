@@ -49,12 +49,13 @@ namespace udit
         "in  vec3    front_color;"
         "in vec2 tex_coord;"
         "uniform sampler2D texture_sampler;"
+        "uniform float transparency;"
         "out vec4 fragment_color;"
         ""
         "void main()"
         "{"
         "   vec4 texture_color = texture(texture_sampler, tex_coord);"
-        "   fragment_color = texture(texture_sampler, tex_coord);"
+        "   fragment_color = vec4(texture_color.rgb, texture_color.a * transparency);"
         "}";
 
     const std::string Scene::skybox_vertex_shader =
@@ -88,12 +89,13 @@ namespace udit
         :
         angle(0), plane(6,4), cylinder(10,1,1,3), cone(10,1.4,3),
         camera(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 1.f, 0.f), -90.f, 0.f),
-        skybox({ "../Textures/sky-cube-map-0.jpg",
-            "../Textures/sky-cube-map-1.jpg",
-            "../Textures/sky-cube-map-2.jpg",
-            "../Textures/sky-cube-map-3.jpg",
-            "../Textures/sky-cube-map-4.jpg",
-            "../Textures/sky-cube-map-5.jpg" })
+        skybox({ "../Textures/sky-cube-map-0.png",
+            "../Textures/sky-cube-map-1.png",
+            "../Textures/sky-cube-map-2.png",
+            "../Textures/sky-cube-map-3.png",
+            "../Textures/sky-cube-map-4.png",
+            "../Textures/sky-cube-map-5.png" }),
+        terrain("../Texturas_map/Pavement_Heightmap.jpg", 20.0f, 20.0f, 0.5f) // Ancho, profundidad, altura máxima
 
     {
         
@@ -133,6 +135,8 @@ namespace udit
         textureLoader("../Textures/wood_texture.jpg");
         textureLoader("../Textures/cylinder_texture.jpg");
         textureLoader("../Textures/cono_textura.jpg");
+        textureLoader("../Texturas_map/Pavement_Albedo.jpg");
+        textureLoader("../Textures/hielo_texture.jpg");
         
     }
 
@@ -180,8 +184,8 @@ namespace udit
         glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0);
 
         glm::mat4 plane_model_matrix(1.0f);
-        plane_model_matrix = glm::translate(plane_model_matrix, glm::vec3(-3.f, 0.f, -8.f));
-        plane_model_matrix = glm::rotate(plane_model_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
+        plane_model_matrix = glm::translate(plane_model_matrix, glm::vec3(-3.f, -0.73f, -8.f));
+        plane_model_matrix = glm::rotate(plane_model_matrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));
         glm::mat4 plane_mvp_matrix = view_matrix * plane_model_matrix;
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(plane_mvp_matrix));
         plane.render();
@@ -196,13 +200,13 @@ namespace udit
 
         glm::mat4 cylinder_model_matrix(1.0f);
         cylinder_model_matrix = glm::translate(cylinder_model_matrix, glm::vec3(-2.f, -0.72f, -6.f));
-        cylinder_model_matrix = glm::rotate(cylinder_model_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
+        cylinder_model_matrix = glm::rotate(cylinder_model_matrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));
         glm::mat4 cylinder_mvp_matrix = view_matrix * cylinder_model_matrix;
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cylinder_mvp_matrix));
         cylinder.render();
 
         texture_id++;
-        // Dibujar el cono
+        // Dibujar el cono 1
         
         glActiveTexture(GL_TEXTURE0); // Activar la unidad de textura 0
         glBindTexture(GL_TEXTURE_2D, texture_id); // Vincular la textura
@@ -210,11 +214,54 @@ namespace udit
 
         glm::mat4 cone_model_matrix(1.0f);
         cone_model_matrix = glm::translate(cone_model_matrix, glm::vec3(2.f, -0.72f, -6.f));
-        cone_model_matrix = glm::rotate(cone_model_matrix, glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
+        cone_model_matrix = glm::rotate(cone_model_matrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));
         cone_model_matrix = glm::rotate(cone_model_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
         glm::mat4 cone_mvp_matrix = view_matrix * cone_model_matrix;
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cone_mvp_matrix));
         cone.render();
+
+        texture_id++;
+
+        //Dibujar el terreno
+        glActiveTexture(GL_TEXTURE0); // Activar la unidad de textura 0
+        glBindTexture(GL_TEXTURE_2D, texture_id); // Vincular la textura
+        glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0); // Enviar la textura al shader
+
+        glm::mat4 terrain_model_matrix(1.0f);
+        terrain_model_matrix = glm::translate(terrain_model_matrix, glm::vec3(-10.f, -1.12f, -15.f)); // Ajustar posición
+        glm::mat4 terrain_mvp_matrix = view_matrix * terrain_model_matrix;
+        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(terrain_mvp_matrix));
+
+        terrain.render();
+
+        texture_id++;
+
+        // Dibujar el cono 2
+        // Habilitar blending para transparencia
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0);
+
+        // Establecer transparencia
+        GLint transparency_location = glGetUniformLocation(program_id, "transparency");
+        glUniform1f(transparency_location, 0.7f); // Ajusta la transparencia (0.0 = totalmente transparente, 1.0 = opaco)
+
+        glm::mat4 cone1_model_matrix(1.0f);
+        cone1_model_matrix = glm::translate(cone1_model_matrix, glm::vec3(7.f, -0.72f, -6.f));
+        cone1_model_matrix = glm::rotate(cone1_model_matrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));
+        cone1_model_matrix = glm::rotate(cone1_model_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
+        glm::mat4 cone1_mvp_matrix = view_matrix * cone1_model_matrix;
+
+        // Enviar la matriz al shader
+        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cone1_mvp_matrix));
+        cone.render();
+
+        // Deshabilitar blending después de renderizar
+        glDisable(GL_BLEND);
+
     }
 
 

@@ -10,6 +10,7 @@
 #include "Cone.hpp"
 #include "Camera.hpp"
 #include "Skybox.hpp"
+#include "Heightmap.hpp"
 #include <string>
 
 namespace udit
@@ -36,6 +37,7 @@ namespace udit
         GLuint program_id;
         Skybox skybox;
         GLuint skybox_shader_program;
+        Heightmap terrain;
         float  angle;
 
     public:
