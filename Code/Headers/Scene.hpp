@@ -8,7 +8,8 @@
 #include "Plane.hpp"
 #include "Cylinder.hpp"
 #include "Cone.hpp"
-#include "Camera.hpp" 
+#include "Camera.hpp"
+#include "Skybox.hpp"
 #include <string>
 
 namespace udit
@@ -20,6 +21,8 @@ namespace udit
 
         static const std::string   vertex_shader_code;
         static const std::string fragment_shader_code;
+        static const std::string skybox_vertex_shader;
+        static const std::string skybox_fragment_shader;
 
         GLint  model_view_matrix_id;
         GLint  projection_matrix_id;
@@ -31,6 +34,8 @@ namespace udit
         Camera camera;
         GLuint texture_id;
         GLuint program_id;
+        Skybox skybox;
+        GLuint skybox_shader_program;
         float  angle;
 
     public:
@@ -43,10 +48,12 @@ namespace udit
         void   render();
         void   resize(unsigned width, unsigned height);
         void textureLoader(std::string route);
+        GLuint load_skybox_texture(std::vector<std::string> faces);
 
     private:
 
         GLuint compile_shaders();
+        GLuint compile_skybox_shaders();
         void   show_compilation_error(GLuint  shader_id);
         void   show_linkage_error(GLuint program_id);
 
