@@ -250,8 +250,8 @@ namespace udit
         glUniform1f(transparency_location, 0.7f); // Ajusta la transparencia (0.0 = totalmente transparente, 1.0 = opaco)
 
         glm::mat4 cone1_model_matrix(1.0f);
-        cone1_model_matrix = glm::translate(cone1_model_matrix, glm::vec3(7.f, -0.72f, -6.f));
-        cone1_model_matrix = glm::rotate(cone1_model_matrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));
+        cone1_model_matrix = glm::translate(cone1_model_matrix, glm::vec3(7.f, 2.3f, -6.f));
+        cone1_model_matrix = glm::rotate(cone1_model_matrix, glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f));
         cone1_model_matrix = glm::rotate(cone1_model_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
         glm::mat4 cone1_mvp_matrix = view_matrix * cone1_model_matrix;
 
