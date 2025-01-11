@@ -87,8 +87,8 @@ namespace udit
 
     Scene::Scene(unsigned width, unsigned height)
         :
-        angle(0), plane(6,4), cylinder(10,1,1,3), cone(10,1.4,3),
-        camera(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 1.f, 0.f), -90.f, 0.f),
+        angle(0), plane(12,6), cylinder(10,1,1,3), cone(10,1.4,3),
+        camera(glm::vec3(0.f, 3.f, 8.f), glm::vec3(0.f, 1.f, 0.f), -90.f, 0.f),
         skybox({ "../Textures/sky-cube-map-0.png",
             "../Textures/sky-cube-map-1.png",
             "../Textures/sky-cube-map-2.png",
@@ -137,7 +137,7 @@ namespace udit
         textureLoader("../Textures/cono_textura.jpg");
         textureLoader("../Texturas_map/Pavement_Albedo.jpg");
         textureLoader("../Textures/hielo_texture.jpg");
-        
+        textureLoader("../Textures/purpura.jpg");
     }
 
     void Scene::process_input(const Uint8* keystate, float delta_time)
@@ -153,10 +153,23 @@ namespace udit
     void Scene::update()
     {
         angle += 0.01f;
+        movement_Speed += 0.2f;
     }
 
     void Scene::render()
     {
+        // Parámetros del movimiento circular
+        float radius = 7.0f; // Radio de la circunferencia
+        float speed = 1.0f;  // Velocidad angular
+
+        // Rotacion entorno a una posicion prestablecida
+        float center_x = 2.0f;
+        float center_z = -6.0f;
+
+        // Calcular la posición en la circunferencia
+        float x = center_x + radius * cos(angle * speed); // Coordenada X
+        float z = center_z + radius * sin(angle * speed); // Coordenada Z
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Renderizar el Skybox
@@ -184,7 +197,7 @@ namespace udit
         glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0);
 
         glm::mat4 plane_model_matrix(1.0f);
-        plane_model_matrix = glm::translate(plane_model_matrix, glm::vec3(-3.f, -0.73f, -8.f));
+        plane_model_matrix = glm::translate(plane_model_matrix, glm::vec3(-4.f, -0.73f, -9.f));
         plane_model_matrix = glm::rotate(plane_model_matrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));
         glm::mat4 plane_mvp_matrix = view_matrix * plane_model_matrix;
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(plane_mvp_matrix));
@@ -222,13 +235,14 @@ namespace udit
 
         texture_id++;
 
+
         //Dibujar el terreno
         glActiveTexture(GL_TEXTURE0); // Activar la unidad de textura 0
         glBindTexture(GL_TEXTURE_2D, texture_id); // Vincular la textura
         glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0); // Enviar la textura al shader
 
         glm::mat4 terrain_model_matrix(1.0f);
-        terrain_model_matrix = glm::translate(terrain_model_matrix, glm::vec3(-10.f, -1.12f, -15.f)); // Ajustar posición
+        terrain_model_matrix = glm::translate(terrain_model_matrix, glm::vec3(-8.f, -1.12f, -16.f)); // Ajustar posición
         glm::mat4 terrain_mvp_matrix = view_matrix * terrain_model_matrix;
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(terrain_mvp_matrix));
 
@@ -250,7 +264,7 @@ namespace udit
         glUniform1f(transparency_location, 0.7f); // Ajusta la transparencia (0.0 = totalmente transparente, 1.0 = opaco)
 
         glm::mat4 cone1_model_matrix(1.0f);
-        cone1_model_matrix = glm::translate(cone1_model_matrix, glm::vec3(7.f, 2.3f, -6.f));
+        cone1_model_matrix = glm::translate(cone1_model_matrix, glm::vec3(6.f, 2.3f, -6.f));
         cone1_model_matrix = glm::rotate(cone1_model_matrix, glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f));
         cone1_model_matrix = glm::rotate(cone1_model_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
         glm::mat4 cone1_mvp_matrix = view_matrix * cone1_model_matrix;
@@ -261,6 +275,27 @@ namespace udit
 
         // Deshabilitar blending después de renderizar
         glDisable(GL_BLEND);
+
+        texture_id++;
+
+        //Dibuja un tercer cono (peonza)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0);
+
+        glm::mat4 cone2_model_matrix(1.0f);
+        cone2_model_matrix = glm::translate(cone2_model_matrix, glm::vec3(x, 2.3f, z));
+        cone2_model_matrix = glm::rotate(cone2_model_matrix, glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f));
+        cone2_model_matrix = glm::rotate(cone2_model_matrix, movement_Speed, glm::vec3(0.f, -1.f, 0.f));
+        glm::mat4 cone2_mvp_matrix = view_matrix * cone2_model_matrix;
+
+        // Enviar la matriz al shader
+        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cone2_mvp_matrix));
+        cone.render();
+        
+        
 
     }
 

@@ -39,6 +39,7 @@ namespace udit
         GLuint skybox_shader_program;
         Heightmap terrain;
         float  angle;
+        float  movement_Speed;
 
     public:
 
