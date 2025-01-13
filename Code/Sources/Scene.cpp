@@ -1,6 +1,7 @@
 
 // Este código es de dominio público
 // angel.rodriguez@udit.es
+//Modificado por davidbercialblazquez@gmail.com
 
 #pragma once
 
@@ -430,31 +431,39 @@ namespace udit
     GLuint Scene::compile_skybox_shaders() {
         GLint succeeded = GL_FALSE;
 
+        // Crear los objetos de shader (vértices y fragmentos).
         GLuint vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
         GLuint fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-
+        
+        // Preparar el código fuente para los shaders.
         const char* vertex_shader_code[] = { skybox_vertex_shader.c_str() };
         const char* fragment_shader_code[] = { skybox_fragment_shader.c_str() };
         const GLint vertex_shader_size[] = { (GLint)skybox_vertex_shader.size() };
         const GLint fragment_shader_size[] = { (GLint)skybox_fragment_shader.size() };
 
+        // Cargar el código fuente en los shaders.
         glShaderSource(vertex_shader_id, 1, vertex_shader_code, vertex_shader_size);
         glShaderSource(fragment_shader_id, 1, fragment_shader_code, fragment_shader_size);
 
+        // Compilar los shaders.
         glCompileShader(vertex_shader_id);
         glCompileShader(fragment_shader_id);
 
+        // Comprobar si la compilación fue exitosa para el shader de vértices.
         glGetShaderiv(vertex_shader_id, GL_COMPILE_STATUS, &succeeded);
         if (!succeeded) show_compilation_error(vertex_shader_id);
 
+        // Comprobar si la compilación fue exitosa para el shader de fragmentos
         glGetShaderiv(fragment_shader_id, GL_COMPILE_STATUS, &succeeded);
         if (!succeeded) show_compilation_error(fragment_shader_id);
 
+        // Crear un programa de shaders y asociar los shaders de vértices y fragmentos.
         GLuint program_id = glCreateProgram();
 
         glAttachShader(program_id, vertex_shader_id);
         glAttachShader(program_id, fragment_shader_id);
 
+        // Enlazar los shaders en un programa.
         glLinkProgram(program_id);
 
         glGetProgramiv(program_id, GL_LINK_STATUS, &succeeded);
