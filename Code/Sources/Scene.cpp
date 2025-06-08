@@ -31,32 +31,40 @@ namespace udit
         "layout (location = 0) in vec3 vertex_coordinates;"
         "layout (location = 1) in vec3 vertex_color;"
         "layout(location = 2) in vec2 vertex_uv;"
+        "layout(location = 3) in vec3 vertex_normal;"
         ""
         ""
         "out vec3 front_color;"
         "out vec2 tex_coord;"
+        "out vec3 normal;"
         ""
         "void main()"
         "{"
         "   gl_Position = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
         "   front_color = vertex_color;"
         "   tex_coord = vertex_uv;"
+        "   normal = mat3(transpose(inverse(model_view_matrix))) * vertex_normal;"
         "}";
 
     const string Scene::fragment_shader_code =
 
         "#version 330\n"
-        ""
-        "in  vec3    front_color;"
+        "uniform vec3 view_pos;"
+        "uniform vec3 light_dir; "
+        "in vec3 front_color;"
         "in vec2 tex_coord;"
+        "in vec3 normal;"
         "uniform sampler2D texture_sampler;"
         "uniform float transparency;"
         "out vec4 fragment_color;"
-        ""
         "void main()"
         "{"
-        "   vec4 texture_color = texture(texture_sampler, tex_coord);"
-        "   fragment_color = vec4(texture_color.rgb, texture_color.a * transparency);"
+        "    vec3 light_dir = normalize(vec3(-1.0, 1.0, -1.0));"
+        "    float diffuse = max(dot(normalize(normal), light_dir), 0.0);"
+        "    vec3 ambient = vec3(0.3);"
+        "    vec4 texture_color = texture(texture_sampler, tex_coord);"
+        "    vec3 lit_color = texture_color.rgb * (ambient + diffuse);"
+        "    fragment_color = vec4(lit_color, texture_color.a * transparency);"
         "}";
 
     const std::string Scene::skybox_vertex_shader =
@@ -137,8 +145,8 @@ namespace udit
         textureLoader("../Textures/cylinder_texture.jpg");
         textureLoader("../Textures/cono_textura.jpg");
         textureLoader("../Texturas_map/Pavement_Albedo.jpg");
-        textureLoader("../Textures/hielo_texture.jpg");
         textureLoader("../Textures/purpura.jpg");
+        textureLoader("../Textures/hielo_texture.jpg");
     }
 
     void Scene::process_input(const Uint8* keystate, float delta_time)
@@ -251,6 +259,25 @@ namespace udit
 
         texture_id++;
 
+        //Dibuja un tercer cono (peonza)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0);
+
+        glm::mat4 cone2_model_matrix(1.0f);
+        cone2_model_matrix = glm::translate(cone2_model_matrix, glm::vec3(x, 2.3f, z));
+        cone2_model_matrix = glm::rotate(cone2_model_matrix, glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f));
+        cone2_model_matrix = glm::rotate(cone2_model_matrix, movement_Speed, glm::vec3(0.f, -1.f, 0.f));
+        glm::mat4 cone2_mvp_matrix = view_matrix * cone2_model_matrix;
+
+        // Enviar la matriz al shader
+        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cone2_mvp_matrix));
+        cone.render();
+
+        texture_id++;
+
         // Dibujar el cono 2
         // Habilitar blending para transparencia
         glEnable(GL_BLEND);
@@ -276,25 +303,6 @@ namespace udit
 
         // Deshabilitar blending después de renderizar
         glDisable(GL_BLEND);
-
-        texture_id++;
-
-        //Dibuja un tercer cono (peonza)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture_id);
-        glUniform1i(glGetUniformLocation(program_id, "texture_sampler"), 0);
-
-        glm::mat4 cone2_model_matrix(1.0f);
-        cone2_model_matrix = glm::translate(cone2_model_matrix, glm::vec3(x, 2.3f, z));
-        cone2_model_matrix = glm::rotate(cone2_model_matrix, glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f));
-        cone2_model_matrix = glm::rotate(cone2_model_matrix, movement_Speed, glm::vec3(0.f, -1.f, 0.f));
-        glm::mat4 cone2_mvp_matrix = view_matrix * cone2_model_matrix;
-
-        // Enviar la matriz al shader
-        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(cone2_mvp_matrix));
-        cone.render();
         
         
 

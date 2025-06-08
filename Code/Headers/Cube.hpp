@@ -6,6 +6,7 @@
 #define CUBE_HEADER
 
 #include <glad/glad.h>
+#include <vector>
 
 namespace udit
 {
@@ -21,14 +22,17 @@ namespace udit
             COORDINATES_VBO,
             COLORS_VBO,
             INDICES_EBO,
+            NORMALS_VBO,
             VBO_COUNT
         };
 
         // Arrays de datos del cubo base:
 
-        static const GLfloat coordinates[];
-        static const GLfloat colors[];
-        static const GLubyte indices[];
+        std::vector<GLfloat> coordinates;
+        std::vector<GLfloat> colors;
+        std::vector<GLfloat> normals;
+        std::vector<GLubyte> indices;
+
 
     private:
 
@@ -45,5 +49,4 @@ namespace udit
     };
 
 }
-
 #endif

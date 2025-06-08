@@ -36,6 +36,10 @@ namespace udit
                 coordinates.push_back(y_pos);
                 coordinates.push_back(z_pos);
 
+                normals.push_back(cos(angle));
+                normals.push_back(0.0f);
+                normals.push_back(sin(angle));
+
                 // Coordenadas UV para las caras laterales
                 float u = static_cast<float>(x) / radial_segments;
                 float v = static_cast<float>(y) / height_segments;
@@ -54,6 +58,10 @@ namespace udit
         coordinates.push_back(0.0f);
         coordinates.push_back(0.0f);
 
+        normals.push_back(0.0f);
+        normals.push_back(-1.0f);
+        normals.push_back(0.0f);
+
         uvs.push_back(0.5f);
         uvs.push_back(0.5f);
 
@@ -64,6 +72,10 @@ namespace udit
         coordinates.push_back(0.0f);  // Centro superior
         coordinates.push_back(height);
         coordinates.push_back(0.0f);
+
+        normals.push_back(0.0f);
+        normals.push_back(1.0f);
+        normals.push_back(0.0f);
 
         uvs.push_back(0.5f);
         uvs.push_back(0.5f);
@@ -136,6 +148,12 @@ namespace udit
         // Índices de los triángulos
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_ids[INDICES_EBO]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLubyte), indices.data(), GL_STATIC_DRAW);
+
+        // Normales
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[NORMALS_VBO]);
+        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(GLfloat), normals.data(), GL_STATIC_DRAW);
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
         glBindVertexArray(0);  // Desvincular el VAO
     }

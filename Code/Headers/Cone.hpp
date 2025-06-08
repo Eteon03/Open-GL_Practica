@@ -32,6 +32,7 @@ namespace udit
             COORDINATES_VBO,  ///< VBO que almacena las coordenadas de los vértices
             COLORS_VBO,       ///< VBO que almacena los colores de los vértices
             UVS_VBO,          ///< VBO que almacena las coordenadas UV de los vértices
+            NORMALS_VBO,     ///< VBO que almacena las normales
             INDICES_EBO,      ///< EBO que almacena los índices para los triángulos de la malla
             VBO_COUNT         ///< Cantidad de VBOs utilizados
         };
@@ -41,6 +42,7 @@ namespace udit
         std::vector<GLfloat> coordinates;  ///< Coordenadas (X, Y, Z) de los vértices
         std::vector<GLfloat> colors;      ///< Colores de cada vértice
         std::vector<GLubyte> indices;     ///< Índices que definen los triángulos del cono
+        std::vector<GLfloat> normals;     ///< Normales
         std::vector<GLfloat> uvs;         ///< Coordenadas UV para mapear texturas
 
         GLuint vbo_ids[VBO_COUNT];        ///< Array que guarda los IDs de los VBOs

@@ -3,6 +3,7 @@
 
 #include "../Headers/Heightmap.hpp"   // Incluir el encabezado de la clase Heightmap
 #include <iostream>                    // Incluir la biblioteca para manejar la salida de errores
+#include <glm.hpp>
 
 /**
  * @brief Constructor de la clase Heightmap.
@@ -103,6 +104,11 @@ void Heightmap::load_heightmap(const std::string& path, float max_height) {
             vertices[vertex_index + 0] = static_cast<float>(x);
             vertices[vertex_index + 1] = y;
             vertices[vertex_index + 2] = static_cast<float>(z);
+
+            float heightL = x > 0 ? data[(z * cols + (x - 1)) * channels] / 255.0f * max_height : y;
+            float heightR = x < cols - 1 ? data[(z * cols + (x + 1)) * channels] / 255.0f * max_height : y;
+            float heightD = z > 0 ? data[((z - 1) * cols + x) * channels] / 255.0f * max_height : y;
+            float heightU = z < rows - 1 ? data[((z + 1) * cols + x) * channels] / 255.0f * max_height : y;
 
             // Guardar la normal (por ahora es una normal simple que puede ser calculada más tarde)
             vertices[vertex_index + 3] = 0.0f;

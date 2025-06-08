@@ -109,6 +109,7 @@ namespace udit
          * @param new_sensitivity La nueva sensibilidad del ratón.
          */
         void set_sensitivity(float new_sensitivity);
+
     };
 
 }

@@ -30,6 +30,7 @@ namespace udit
             COORDINATES_VBO,  ///< VBO para las coordenadas de los vértices
             COLORS_VBO,       ///< VBO para los colores de los vértices
             UVS_VBO,          ///< VBO para las coordenadas UV
+            NORMALS_VBO,
             INDICES_EBO,      ///< EBO para los índices de los triángulos
             VBO_COUNT         ///< Número total de VBOs utilizados
         };
@@ -39,6 +40,7 @@ namespace udit
         std::vector<GLfloat> coordinates;  ///< Coordenadas de los vértices (X, Y, Z)
         std::vector<GLfloat> colors;      ///< Colores de los vértices (RGB)
         std::vector<GLubyte> indices;     ///< Índices que definen los triángulos del plano
+        std::vector<GLfloat> normals;
         std::vector<GLfloat> uvs;         ///< Coordenadas UV para texturización
 
         GLuint vbo_ids[VBO_COUNT];        ///< Array que contiene los IDs de los VBOs
@@ -74,5 +76,4 @@ namespace udit
         void render();
 
     };
-
 }

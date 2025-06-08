@@ -37,6 +37,11 @@ namespace udit
                 // Coordenadas UV, interpoladas para mapear una textura
                 uvs.push_back(static_cast<GLfloat>(x) / width);
                 uvs.push_back(static_cast<GLfloat>(y) / height);
+
+                // Normal constante apuntando hacia arriba
+                normals.push_back(0.0f);
+                normals.push_back(1.0f);
+                normals.push_back(0.0f);
             }
         }
 
@@ -89,6 +94,13 @@ namespace udit
 
         glEnableVertexAttribArray(2);  // Activar el atributo para las coordenadas UV
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);  // Establecer el puntero a las coordenadas UV
+        
+        // Normales (VBO)
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[NORMALS_VBO]);
+        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(GLfloat), normals.data(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
         // Índices (EBO)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_ids[INDICES_EBO]);

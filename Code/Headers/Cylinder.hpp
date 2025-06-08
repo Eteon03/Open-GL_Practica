@@ -30,6 +30,7 @@ namespace udit
             COLORS_VBO,       ///< VBO que almacena los colores de los vértices
             UVS_VBO,          ///< VBO que almacena las coordenadas de textura (UVs)
             INDICES_EBO,      ///< EBO que almacena los índices para los triángulos
+            NORMALS_VBO,
             VBO_COUNT         ///< Total de VBOs utilizados
         };
 
@@ -39,6 +40,7 @@ namespace udit
         std::vector<GLfloat> colors;      ///< Colores de los vértices
         std::vector<GLubyte> indices;     ///< Índices que definen las caras del cilindro
         std::vector<GLfloat> uvs;         ///< Coordenadas UV para las texturas
+        std::vector<GLfloat> normals;
 
         GLuint vbo_ids[VBO_COUNT];        ///< Ids de los VBOs que se usan
         GLuint vao_id;                    ///< Id del VAO (Vertex Array Object) del cilindro

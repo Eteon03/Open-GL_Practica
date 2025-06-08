@@ -43,12 +43,25 @@ namespace udit
             float v = 0.5f + 0.5f * sin(2.0f * std::numbers::pi * i / radial_segments);
             uvs.push_back(u);
             uvs.push_back(v);
+
+            float nx = x;
+            float ny = radius / height;
+            float nz = z;
+            float length = sqrt(nx * nx + ny * ny + nz * nz);
+            normals.push_back(nx / length);
+            normals.push_back(ny / length);
+            normals.push_back(nz / length);
         }
 
         // Vértice central de la base:
         coordinates.push_back(0.0f);  // X
         coordinates.push_back(0.0f);  // Y
         coordinates.push_back(0.0f);  // Z
+
+        //Normales vertice central
+        normals.push_back(0.0f);
+        normals.push_back(-1.0f);
+        normals.push_back(0.0f);
 
         colors.push_back(1.0f);  // Rojo para el vértice central
         colors.push_back(0.0f);
@@ -63,6 +76,11 @@ namespace udit
         coordinates.push_back(0.0f);  // X
         coordinates.push_back(height);  // Y (en la altura máxima)
         coordinates.push_back(0.0f);  // Z
+
+        //Normales ápice
+        normals.push_back(0.0f);
+        normals.push_back(1.0f);
+        normals.push_back(0.0f);
 
         colors.push_back(0.0f);  // Azul para el vértice del ápice
         colors.push_back(0.0f);
@@ -118,6 +136,12 @@ namespace udit
         // Índices de los triángulos:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_ids[INDICES_EBO]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLubyte), indices.data(), GL_STATIC_DRAW);
+
+        //Normales
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[NORMALS_VBO]);
+        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(GLfloat), normals.data(), GL_STATIC_DRAW);
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
         glBindVertexArray(0);  // Desvincular el VAO
     }
