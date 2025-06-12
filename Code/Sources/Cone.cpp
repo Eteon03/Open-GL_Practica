@@ -3,6 +3,7 @@
 
 #include "../Headers/Cone.hpp"
 #include <numbers>
+#include <gtc/type_ptr.hpp>
 
 namespace udit
 {
@@ -164,13 +165,19 @@ namespace udit
      * usando los índices almacenados en el EBO. El modo de polígonos se establece en
      * GL_FILL para dibujar los triángulos con relleno.
      */
-    void Cone::render()
+    void Cone::render(const glm::mat4& model_matrix) const
     {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // Dibujar con relleno
-        glEnable(GL_CULL_FACE);  // Activar el culling para optimizar el renderizado
-        glBindVertexArray(vao_id);  // Vincular el VAO
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_BYTE, 0);  // Dibujar los triángulos usando los índices
-        glBindVertexArray(0);  // Desvincular el VAO
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glEnable(GL_CULL_FACE);
+
+        GLint program;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+        GLint model_loc = glGetUniformLocation(program, "model");
+        glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model_matrix));
+
+        glBindVertexArray(vao_id);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_BYTE, nullptr);
+        glBindVertexArray(0);
     }
 
 }

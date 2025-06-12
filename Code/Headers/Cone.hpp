@@ -5,6 +5,7 @@
 
 #include <glad/glad.h>   // Biblioteca para cargar funciones de OpenGL
 #include <vector>        // Biblioteca para usar el contenedor dinámico std::vector
+#include <glm.hpp>
 
 namespace udit
 {
@@ -75,7 +76,7 @@ namespace udit
          *
          * Este método usa los buffers de OpenGL configurados para dibujar el cono en la escena.
          */
-        void render();
+        void render(const glm::mat4& model_matrix)const;
 
     };
 

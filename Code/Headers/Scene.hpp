@@ -23,6 +23,7 @@
 #include "Camera.hpp"
 #include "Skybox.hpp"
 #include "Heightmap.hpp"
+#include "SceneGraphNode.hpp"
 #include <string>
 
 namespace udit
@@ -43,8 +44,12 @@ namespace udit
         static const std::string skybox_vertex_shader;
         static const std::string skybox_fragment_shader;
 
-        GLint  model_view_matrix_id;
+        std::shared_ptr<SceneGraphNode> root_node;
+        std::shared_ptr<SceneGraphNode> nodo_cono;
+        std::shared_ptr<SceneGraphNode> nodo_cono2;
+        GLint  model_matrix_id;
         GLint  projection_matrix_id;
+        GLint view_id;
 
         Cube   cube;
         Plane plane;
