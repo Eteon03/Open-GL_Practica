@@ -27,18 +27,18 @@ namespace udit
             float y_pos = height * (static_cast<float>(y) / height_segments);  // Posición Y de cada vértice
             for (int x = 0; x <= radial_segments; ++x)
             {
-                float angle = 2.0f * std::numbers::pi * (static_cast<float>(x) / radial_segments);  // Ángulo en la base
-                float x_pos = radius * cos(angle);  // Coordenada X de cada vértice en función del radio y el ángulo
-                float z_pos = radius * sin(angle);  // Coordenada Z de cada vértice en función del radio y el ángulo
+                float angle = 2.0f * static_cast<float>(std::numbers::pi) * (static_cast<float>(x) / radial_segments);  // Ángulo en la base
+                float x_pos = radius * static_cast<float>(cos(angle));  // Coordenada X de cada vértice en función del radio y el ángulo
+                float z_pos = radius * static_cast<float>(sin(angle));  // Coordenada Z de cada vértice en función del radio y el ángulo
 
                 // Coordenadas de los vértices
                 coordinates.push_back(x_pos);
                 coordinates.push_back(y_pos);
                 coordinates.push_back(z_pos);
 
-                normals.push_back(cos(angle));
+                normals.push_back(static_cast<GLfloat>(cos(angle)));
                 normals.push_back(0.0f);
-                normals.push_back(sin(angle));
+                normals.push_back(static_cast<GLfloat>(sin(angle)));
 
                 // Coordenadas UV para las caras laterales
                 float u = static_cast<float>(x) / radial_segments;
@@ -105,8 +105,8 @@ namespace udit
         }
 
         // Generar índices para las bases:
-        int base_center_index = coordinates.size() / 3 - 2; // Centro inferior
-        int top_center_index = coordinates.size() / 3 - 1;  // Centro superior
+        int base_center_index = static_cast<int>(coordinates.size()) / 3 - 2; // Centro inferior
+        int top_center_index = static_cast<int>(coordinates.size()) / 3 - 1;  // Centro superior
 
         for (int x = 0; x < radial_segments; ++x)
         {
@@ -181,7 +181,7 @@ namespace udit
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // Dibuja el cilindro con relleno
         glDisable(GL_CULL_FACE);  // Desactiva el culling (no recorta caras)
         glBindVertexArray(vao_id);  // Vincula el VAO
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_BYTE, 0);  // Dibuja los triángulos utilizando los índices
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_BYTE, 0);  // Dibuja los triángulos utilizando los índices
         glBindVertexArray(0);  // Desvincula el VAO
     }
 

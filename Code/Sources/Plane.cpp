@@ -25,9 +25,9 @@ namespace udit
             for (int x = 0; x <= width; ++x)  // Itera a lo largo del eje X
             {
                 // Coordenadas de los vértices (en el plano XZ, con Y = 0)
-                coordinates.push_back(x);
+                coordinates.push_back(static_cast<GLfloat>(x));
                 coordinates.push_back(0); // Altura fija en 0 (plano en XZ)
-                coordinates.push_back(y);
+                coordinates.push_back(static_cast<GLfloat>(y));
 
                 // Colores de los vértices, interpolados en función de su posición en el plano
                 colors.push_back(static_cast<GLfloat>(x) / width);  // Color en el eje X
@@ -132,7 +132,7 @@ namespace udit
         glDisable(GL_CULL_FACE);  // Desactivar el culling para que el plano sea visible desde ambos lados
 
         glBindVertexArray(vao_id);  // Vincular el VAO
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_BYTE, 0);  // Dibujar los triángulos usando los índices
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_BYTE, 0);  // Dibujar los triángulos usando los índices
         glBindVertexArray(0);  // Desvincular el VAO
     }
 

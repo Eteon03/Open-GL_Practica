@@ -172,6 +172,6 @@ void Heightmap::generate_mesh(float width, float depth) {
  */
 void Heightmap::render() {
     glBindVertexArray(vao_id);  // Vincular el VAO
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  // Dibujar los triángulos
+    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);  // Dibujar los triángulos
     glBindVertexArray(0);  // Desvincular el VAO
 }

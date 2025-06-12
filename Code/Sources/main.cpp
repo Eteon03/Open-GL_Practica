@@ -51,7 +51,7 @@ int main(int, char* [])
 
             if (event.type == SDL_MOUSEMOTION)
             {
-                scene.process_mouse_motion(event.motion.xrel, -event.motion.yrel);
+                scene.process_mouse_motion(static_cast<float>(event.motion.xrel), static_cast<float>(-event.motion.yrel));
             }
         }
 

@@ -24,9 +24,9 @@ namespace udit
         for (int i = 0; i < radial_segments; ++i)
         {
             // Calcular el ángulo de cada segmento radiales
-            float angle = 2.0f * std::numbers::pi * static_cast<float>(i) / radial_segments;
-            float x = radius * cos(angle);  // Coordenada X en la base
-            float z = radius * sin(angle);  // Coordenada Z en la base
+            float angle = 2.0f * static_cast<float>(std::numbers::pi) * static_cast<float>(i) / radial_segments;
+            float x = radius * static_cast<float>(cos(angle));  // Coordenada X en la base
+            float z = radius * static_cast<float>(sin(angle));  // Coordenada Z en la base
 
             // Guardar las coordenadas de los vértices de la base
             coordinates.push_back(x);
@@ -39,15 +39,15 @@ namespace udit
             colors.push_back(1.0f);
 
             // Asignar coordenadas UV para la base
-            float u = 0.5f + 0.5f * cos(2.0f * std::numbers::pi * i / radial_segments);
-            float v = 0.5f + 0.5f * sin(2.0f * std::numbers::pi * i / radial_segments);
+            float u = 0.5f + 0.5f * static_cast<float>(cos(2.0f * static_cast<float>(std::numbers::pi) * static_cast<float>(i) / radial_segments));
+            float v = 0.5f + 0.5f * static_cast<float>(sin(2.0f * static_cast<float>(std::numbers::pi) * static_cast<float>(i) / radial_segments));
             uvs.push_back(u);
             uvs.push_back(v);
 
             float nx = x;
             float ny = radius / height;
             float nz = z;
-            float length = sqrt(nx * nx + ny * ny + nz * nz);
+            float length = static_cast<float>(sqrt(nx * nx + ny * ny + nz * nz));
             normals.push_back(nx / length);
             normals.push_back(ny / length);
             normals.push_back(nz / length);
@@ -169,7 +169,7 @@ namespace udit
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // Dibujar con relleno
         glEnable(GL_CULL_FACE);  // Activar el culling para optimizar el renderizado
         glBindVertexArray(vao_id);  // Vincular el VAO
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_BYTE, 0);  // Dibujar los triángulos usando los índices
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_BYTE, 0);  // Dibujar los triángulos usando los índices
         glBindVertexArray(0);  // Desvincular el VAO
     }
 

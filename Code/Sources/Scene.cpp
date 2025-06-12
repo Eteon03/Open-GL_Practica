@@ -96,7 +96,7 @@ namespace udit
 
     Scene::Scene(unsigned width, unsigned height)
         :
-        angle(0), plane(12,6), cylinder(10,1,1,3), cone(10,1.4,3),
+        angle(0), plane(12,6), cylinder(10,1,1,3), cone(10,1.4f,3),
         camera(glm::vec3(0.f, 3.f, 8.f), glm::vec3(0.f, 1.f, 0.f), -90.f, 0.f),
         skybox({ "../Textures/sky-cube-map-0.png",
             "../Textures/sky-cube-map-1.png",
