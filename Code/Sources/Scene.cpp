@@ -150,7 +150,7 @@ namespace udit
         textureLoader("../Textures/hielo_texture.jpg");
 
         root_node = std::make_shared<SceneGraphNode>();
-        root_node->set_transform(glm::translate(glm::mat4(1.0f), glm::vec3(2.f, -0.72f, -6.f)));
+        root_node->set_transform(glm::translate(glm::mat4(1.0f), glm::vec3(1.2f, -0.35f, -3.2f)));
         nodo_cono = std::make_shared<SceneGraphNode>();
         nodo_cono->set_draw_callback([this](const glm::mat4& model_matrix) {
             glActiveTexture(GL_TEXTURE0);
