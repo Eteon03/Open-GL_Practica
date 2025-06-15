@@ -149,6 +149,8 @@ namespace udit
         textureLoader("../Textures/purpura.jpg");
         textureLoader("../Textures/hielo_texture.jpg");
 
+        //Creamos los nodos
+
         root_node = std::make_shared<SceneGraphNode>();
         root_node->set_transform(glm::translate(glm::mat4(1.0f), glm::vec3(1.2f, -0.35f, -3.2f)));
         nodo_cono = std::make_shared<SceneGraphNode>();
@@ -240,7 +242,7 @@ namespace udit
 
         texture_id++;
 
-        //// Dibujar el cono 1
+        //// Dibujar el cono 1 (Metodo anterior, sin nodos)
         //
         //glActiveTexture(GL_TEXTURE0); // Activar la unidad de textura 0
         //glBindTexture(GL_TEXTURE_2D, texture_id); // Vincular la textura
@@ -252,6 +254,8 @@ namespace udit
         //cone_model_matrix = glm::rotate(cone_model_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
         //
         //cone.render(cone_model_matrix);
+        
+        //Renderizamos el cono a partir del nodo
         nodo_cono->set_transform(glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.f, 1.f, 0.f)));
         root_node->draw(root_node->get_transform());
         texture_id++;
